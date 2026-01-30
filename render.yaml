@@ -1,9 +1,9 @@
 services:
   - type: web
     name: feedback-dashboard
-    runtime: static
+    runtime: node
     buildCommand: corepack enable && pnpm install && pnpm run build
-    staticPublishPath: dist
+    startCommand: node .output/server/index.mjs
     envVars:
       - key: TURSO_DATABASE_URL
         sync: false
@@ -11,3 +11,5 @@ services:
         sync: false
       - key: ADMIN_PASSWORD
         sync: false
+      - key: NODE_ENV
+        value: production
