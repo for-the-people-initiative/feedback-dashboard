@@ -9,5 +9,6 @@ export default defineNuxtConfig({
     tursoToken: process.env.TURSO_AUTH_TOKEN || '',
     adminPassword: process.env.ADMIN_PASSWORD || 'admin',
   },
+  srcDir: 'app/',
   compatibilityDate: '2025-01-30',
 });
