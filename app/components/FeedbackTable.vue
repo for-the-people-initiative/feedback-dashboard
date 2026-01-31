@@ -17,7 +17,7 @@
       Geen feedback gevonden
     </template>
     <template #column-type="{ data }">
-      <TypeIcon :type="String(data.type)" />
+      <span class="type-cell">{{ data.type === 'bug' ? 'Bug' : data.type === 'suggestion' ? 'Suggestie' : data.type === 'question' ? 'Vraag' : data.type }}</span>
     </template>
     <template #column-title="{ data }">
       <span class="title-cell">{{ data.title || '(geen titel)' }}</span>
@@ -26,7 +26,7 @@
       <span class="app-cell">{{ data.app || '-' }}</span>
     </template>
     <template #column-status="{ data }">
-      <StatusBadge :status="String(data.status || 'new')" />
+      <span class="status-cell">{{ statusLabel(String(data.status || 'new')) }}</span>
     </template>
     <template #column-created_at="{ data }">
       <span class="date-cell">{{ formatDate(String(data.created_at || '')) }}</span>
@@ -59,6 +59,11 @@ const columns = [
   { field: 'status', header: 'Status', width: '140px' },
   { field: 'created_at', header: 'Datum', width: '180px' },
 ];
+
+const STATUS_LABELS: Record<string, string> = {
+  new: 'Nieuw', seen: 'Gezien', in_progress: 'In behandeling', resolved: 'Opgelost', wont_fix: 'Niet oplossen',
+};
+function statusLabel(s: string) { return STATUS_LABELS[s] || s; }
 
 function formatDate(d: string) {
   if (!d) return '-';
