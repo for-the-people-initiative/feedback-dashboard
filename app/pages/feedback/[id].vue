@@ -31,16 +31,13 @@
         <Card v-if="allScreenshots.length">
           <template #title>Screenshots ({{ allScreenshots.length }})</template>
           <template #content>
-            <div class="screenshot-grid">
-              <FtpImage
-                v-for="(src, i) in allScreenshots"
-                :key="i"
-                :src="src"
-                :alt="`Screenshot ${i + 1}`"
-                :preview="true"
-                class="screenshot-img"
-              />
-            </div>
+            <Galleria
+              :items="galleryItems"
+              :fullscreen="true"
+              :showThumbnails="true"
+              :showItemNavigators="true"
+              :circular="true"
+            />
           </template>
         </Card>
 
@@ -107,7 +104,7 @@ import Button from '@for-the-people-initiative/design-system/components/Button/B
 import Card from '@for-the-people-initiative/design-system/components/Card/Card.vue';
 import Chip from '@for-the-people-initiative/design-system/components/Chip/Chip.vue';
 import Divider from '@for-the-people-initiative/design-system/components/Divider/Divider.vue';
-import FtpImage from '@for-the-people-initiative/design-system/components/Image/Image.vue';
+import Galleria from '@for-the-people-initiative/design-system/components/Galleria/Galleria.vue';
 import ProgressSpinner from '@for-the-people-initiative/design-system/components/ProgressSpinner/ProgressSpinner.vue';
 
 const route = useRoute();
@@ -142,6 +139,14 @@ const allScreenshots = computed(() => {
   }
   return imgs;
 });
+
+const galleryItems = computed(() =>
+  allScreenshots.value.map((src, i) => ({
+    src,
+    alt: `Screenshot ${i + 1}`,
+    thumbnail: src,
+  }))
+);
 
 const metaFields = computed(() => {
   const f = feedback.value;
@@ -244,15 +249,6 @@ onMounted(fetchFeedback);
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xs);
-}
-.screenshot-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: var(--space-s);
-}
-.screenshot-img {
-  border-radius: var(--radius-rounded);
-  overflow: hidden;
 }
 .action-btns {
   display: flex;
