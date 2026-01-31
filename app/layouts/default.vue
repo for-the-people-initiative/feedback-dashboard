@@ -31,6 +31,9 @@ async function logout() {
   color: var(--text-default);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
+:global(:root) {
+  --dataTable-body-background-striped: #0d1225;
+}
 :global(body) {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;

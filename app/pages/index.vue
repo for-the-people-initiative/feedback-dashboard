@@ -1,7 +1,5 @@
 <template>
   <div>
-    <StatsCards :stats="stats" />
-
     <Toolbar class="filters-toolbar">
       <template #start>
         <Select
@@ -14,6 +12,12 @@
           v-model="filters.status"
           :options="statusOptions"
           placeholder="Alle statussen"
+          @change="fetchFeedback"
+        />
+        <Select
+          v-model="filters.app"
+          :options="appOptions"
+          placeholder="Alle apps"
           @change="fetchFeedback"
         />
       </template>
@@ -46,12 +50,12 @@ import Toolbar from '@for-the-people-initiative/design-system/components/Toolbar
 import Paginator from '@for-the-people-initiative/design-system/components/Paginator/Paginator.vue';
 
 const items = ref<any[]>([]);
-const stats = ref<any>(null);
 const loading = ref(true);
 const page = ref(1);
 const totalPages = ref(1);
 const totalRecords = ref(0);
-const filters = reactive({ type: '', status: '', search: '' });
+const filters = reactive({ type: '', status: '', search: '', app: '' });
+const appOptions = ref([{ label: 'Alle apps', value: '' }]);
 
 const typeOptions = [
   { label: 'Alle types', value: '' },
@@ -86,6 +90,7 @@ async function fetchFeedback() {
     const params: Record<string, string> = { page: String(page.value), limit: '20', sort: 'created_at', order: 'desc' };
     if (filters.type) params.type = filters.type;
     if (filters.status) params.status = filters.status;
+    if (filters.app) params.app = filters.app;
     if (filters.search) params.search = filters.search;
     const data = await $fetch<any>('/api/feedback', { params });
     items.value = data.items;
@@ -98,19 +103,23 @@ async function fetchFeedback() {
   }
 }
 
-async function fetchStats() {
+async function fetchApps() {
   try {
-    stats.value = await $fetch('/api/feedback/stats');
+    const apps = await $fetch<string[]>('/api/feedback/apps');
+    appOptions.value = [
+      { label: 'Alle apps', value: '' },
+      ...apps.map(a => ({ label: a, value: a })),
+    ];
   } catch {}
 }
 
 onMounted(() => {
   fetchFeedback();
-  fetchStats();
+  fetchApps();
 });
 
 let interval: ReturnType<typeof setInterval>;
-onMounted(() => { interval = setInterval(() => { fetchFeedback(); fetchStats(); }, 30000); });
+onMounted(() => { interval = setInterval(() => { fetchFeedback(); }, 30000); });
 onUnmounted(() => clearInterval(interval));
 </script>
 

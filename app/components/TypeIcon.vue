@@ -8,9 +8,9 @@ import Tag from '@for-the-people-initiative/design-system/components/Tag/Tag.vue
 const props = defineProps<{ type: string }>();
 
 const labelMap: Record<string, string> = {
-  bug: '🐛 Bug',
-  suggestion: '✨ Suggestie',
-  question: '❓ Vraag',
+  bug: 'Bug',
+  suggestion: 'Suggestie',
+  question: 'Vraag',
 };
 
 const colorMap: Record<string, 'danger' | 'info' | 'warning' | 'neutral'> = {
