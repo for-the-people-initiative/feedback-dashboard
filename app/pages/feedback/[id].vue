@@ -45,16 +45,13 @@
         <Card>
           <template #title>Status wijzigen</template>
           <template #content>
-            <div class="action-btns">
-              <Button
-                v-for="s in statuses"
-                :key="s.value"
-                :label="s.label"
-                :variant="feedback.status === s.value ? 'primary' : 'secondary'"
-                size="sm"
-                @click="updateStatus(s.value)"
-              />
-            </div>
+            <SelectButton
+              :modelValue="feedback.status"
+              :options="statuses"
+              optionLabel="label"
+              optionValue="value"
+              @update:modelValue="updateStatus"
+            />
           </template>
         </Card>
       </div>
@@ -102,6 +99,7 @@
 <script setup lang="ts">
 import Button from '@for-the-people-initiative/design-system/components/Button/Button.vue';
 import Card from '@for-the-people-initiative/design-system/components/Card/Card.vue';
+import SelectButton from '@for-the-people-initiative/design-system/components/SelectButton/SelectButton.vue';
 import Chip from '@for-the-people-initiative/design-system/components/Chip/Chip.vue';
 import Divider from '@for-the-people-initiative/design-system/components/Divider/Divider.vue';
 import Galleria from '@for-the-people-initiative/design-system/components/Galleria/Galleria.vue';
