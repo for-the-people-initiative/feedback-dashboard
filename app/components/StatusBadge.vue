@@ -18,16 +18,33 @@ const label = computed(() => labels[props.status] || props.status);
 
 <style scoped>
 .status-badge {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: capitalize;
+  display: inline-flex;
+  align-items: center;
+  padding: var(--badge-padding-sm) var(--badge-padding-md);
+  border-radius: var(--badge-radius);
+  font-size: var(--badge-fontSize-sm);
+  font-weight: var(--badge-fontWeight);
+  line-height: 1;
+  white-space: nowrap;
 }
-.new { background: var(--color-info, #3b82f6); color: white; }
-.seen { background: var(--color-warning, #eab308); color: #1a1a1a; }
-.in_progress { background: var(--color-accent, #f97316); color: white; }
-.resolved { background: var(--color-success, #22c55e); color: white; }
-.wont_fix { background: var(--color-muted, #6b7280); color: white; }
+.new {
+  background: var(--badge-background-info);
+  color: var(--badge-text-info);
+}
+.seen {
+  background: var(--badge-background-warning);
+  color: var(--badge-text-warning);
+}
+.in_progress {
+  background: var(--badge-background-primary);
+  color: var(--badge-text-primary);
+}
+.resolved {
+  background: var(--badge-background-success);
+  color: var(--badge-text-success);
+}
+.wont_fix {
+  background: var(--tag-background-neutral);
+  color: var(--tag-text-neutral);
+}
 </style>

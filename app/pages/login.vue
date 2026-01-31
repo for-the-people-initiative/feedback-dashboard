@@ -1,18 +1,18 @@
 <template>
   <div class="login-page">
     <div class="login-card">
-      <h1>🔐 Feedback Dashboard</h1>
-      <p>Voer het admin wachtwoord in om door te gaan.</p>
+      <h1 class="login-title">🔐 Feedback Dashboard</h1>
+      <p class="login-subtitle">Voer het admin wachtwoord in om door te gaan.</p>
       <form @submit.prevent="login">
         <input
           v-model="password"
           type="password"
           placeholder="Wachtwoord"
-          class="input"
+          class="login-input"
           autofocus
         />
-        <p v-if="error" class="error">{{ error }}</p>
-        <button type="submit" class="btn" :disabled="loading">
+        <p v-if="error" class="login-error">{{ error }}</p>
+        <button type="submit" class="login-btn" :disabled="loading">
           {{ loading ? 'Bezig...' : 'Inloggen' }}
         </button>
       </form>
@@ -47,43 +47,74 @@ async function login() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-background, #0f0f1a);
-  color: var(--color-text, #e0e0e0);
+  background: var(--surface-canvas);
+  color: var(--text-default);
 }
 .login-card {
-  background: var(--color-surface, #1e1e2e);
-  border: 1px solid var(--color-border, #333);
-  border-radius: 12px;
-  padding: var(--space-6, 32px);
+  background: var(--card-background);
+  border: var(--card-border-width) solid var(--card-border-color);
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-l);
+  padding: var(--space-2xl);
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   text-align: center;
 }
-.login-card h1 { font-size: 1.4rem; margin-bottom: 8px; }
-.login-card p { color: var(--color-text-muted, #888); font-size: 0.9rem; margin-bottom: 20px; }
-.input {
+.login-title {
+  font-size: 1.5rem;
+  font-weight: var(--card-title-fontWeight);
+  color: var(--text-heading);
+  margin: 0 0 var(--space-2xs);
+}
+.login-subtitle {
+  color: var(--text-muted);
+  font-size: var(--card-subtitle-fontSize);
+  margin: 0 0 var(--space-l);
+}
+.login-input {
   width: 100%;
-  padding: 10px 14px;
-  border: 1px solid var(--color-border, #444);
-  border-radius: 8px;
-  background: var(--color-background, #0f0f1a);
-  color: var(--color-text, #e0e0e0);
-  font-size: 1rem;
-  margin-bottom: 12px;
+  padding: var(--input-text-padding-y) var(--input-text-padding-x);
+  border: var(--input-text-border-width) solid var(--border-default);
+  border-radius: var(--input-text-radius);
+  background: var(--surface-canvas);
+  color: var(--text-default);
+  font-size: var(--input-text-fontSize-md);
+  margin-bottom: var(--space-m);
   box-sizing: border-box;
+  transition: border-color var(--button-transition-duration);
 }
-.btn {
+.login-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 var(--button-focus-ringWidth) rgba(249, 115, 22, 0.25);
+}
+.login-input::placeholder {
+  color: var(--text-subtle);
+}
+.login-btn {
   width: 100%;
-  padding: 10px;
+  padding: var(--button-size-md-paddingY) var(--button-size-md-paddingX);
   border: none;
-  border-radius: 8px;
-  background: var(--color-primary, #818cf8);
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
+  border-radius: var(--button-radius-default);
+  background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
+  color: var(--button-text-primary-default);
+  font-size: var(--button-size-md-fontSize);
+  font-weight: var(--button-fontWeight);
   cursor: pointer;
+  transition: all var(--button-transition-duration);
+  height: var(--button-size-md-height);
 }
-.btn:hover { opacity: 0.9; }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.error { color: var(--color-error, #f87171); font-size: 0.85rem; }
+.login-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--accent-gradient-hoverStart), var(--accent-gradient-hoverEnd));
+}
+.login-btn:disabled {
+  background: var(--button-background-primary-disabled);
+  color: var(--button-text-primary-disabled);
+  cursor: not-allowed;
+}
+.login-error {
+  color: var(--feedback-errorEmphasis);
+  font-size: var(--card-subtitle-fontSize);
+  margin: 0 0 var(--space-s);
+}
 </style>

@@ -1,8 +1,10 @@
 <template>
   <div class="app-layout">
     <header class="app-header">
-      <h1 class="app-title">📋 Feedback Dashboard</h1>
-      <button class="logout-btn" @click="logout">Uitloggen</button>
+      <div class="app-header-inner">
+        <h1 class="app-title">📋 Feedback Dashboard</h1>
+        <button class="logout-btn" @click="logout">Uitloggen</button>
+      </div>
     </header>
     <main class="app-main">
       <slot />
@@ -20,36 +22,49 @@ async function logout() {
 <style scoped>
 .app-layout {
   min-height: 100vh;
-  background: var(--color-background, #0f0f1a);
-  color: var(--color-text, #e0e0e0);
+  background: var(--surface-canvas);
+  color: var(--text-default);
 }
 .app-header {
+  background: var(--surface-panel);
+  border-bottom: 1px solid var(--border-default);
+  box-shadow: var(--shadow-s);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.app-header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-3, 12px) var(--space-5, 20px);
-  background: var(--color-surface, #1e1e2e);
-  border-bottom: 1px solid var(--color-border, #333);
+  padding: var(--space-s) var(--space-l);
+  max-width: 1280px;
+  margin: 0 auto;
 }
 .app-title {
-  font-size: 1.2rem;
+  font-size: var(--card-title-fontSize);
+  font-weight: var(--card-title-fontWeight);
   margin: 0;
+  color: var(--text-heading);
 }
 .logout-btn {
-  background: transparent;
-  border: 1px solid var(--color-border, #444);
-  color: var(--color-text-muted, #aaa);
-  padding: 6px 14px;
-  border-radius: 6px;
+  background: var(--button-background-secondary-default);
+  border: var(--button-border-width) solid var(--border-strong);
+  color: var(--text-secondary);
+  padding: var(--button-size-sm-paddingY) var(--button-size-sm-paddingX);
+  border-radius: var(--button-radius-default);
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: var(--button-size-sm-fontSize);
+  font-weight: var(--button-fontWeight);
+  transition: all var(--button-transition-duration);
 }
 .logout-btn:hover {
-  background: var(--color-surface-hover, rgba(255,255,255,0.08));
+  background: var(--button-background-secondary-hover);
+  color: var(--text-default);
 }
 .app-main {
-  padding: var(--space-4, 16px) var(--space-5, 20px);
-  max-width: 1200px;
+  padding: var(--space-l) var(--space-l);
+  max-width: 1280px;
   margin: 0 auto;
 }
 </style>

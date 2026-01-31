@@ -2,14 +2,14 @@
   <div>
     <StatsCards :stats="stats" />
 
-    <div class="filters">
-      <select v-model="filters.type" class="select" @change="fetchFeedback">
+    <div class="filters-bar">
+      <select v-model="filters.type" class="filter-select" @change="fetchFeedback">
         <option value="">Alle types</option>
         <option value="bug">🐛 Bug</option>
         <option value="suggestion">✨ Suggestie</option>
         <option value="question">❓ Vraag</option>
       </select>
-      <select v-model="filters.status" class="select" @change="fetchFeedback">
+      <select v-model="filters.status" class="filter-select" @change="fetchFeedback">
         <option value="">Alle statussen</option>
         <option value="new">Nieuw</option>
         <option value="seen">Gezien</option>
@@ -17,7 +17,10 @@
         <option value="resolved">Opgelost</option>
         <option value="wont_fix">Niet oplossen</option>
       </select>
-      <input v-model="filters.search" class="input" placeholder="Zoeken..." @input="debouncedFetch" />
+      <div class="search-wrap">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input v-model="filters.search" class="search-input" placeholder="Zoeken..." @input="debouncedFetch" />
+      </div>
     </div>
 
     <FeedbackTable :items="items" :loading="loading" @select="(id) => navigateTo(`/feedback/${id}`)" />
@@ -72,44 +75,96 @@ onMounted(() => {
   fetchStats();
 });
 
-// Auto-refresh
 let interval: ReturnType<typeof setInterval>;
 onMounted(() => { interval = setInterval(() => { fetchFeedback(); fetchStats(); }, 30000); });
 onUnmounted(() => clearInterval(interval));
 </script>
 
 <style scoped>
-.filters {
+.filters-bar {
   display: flex;
-  gap: var(--space-3, 12px);
-  margin-bottom: var(--space-4, 16px);
+  gap: var(--space-s);
+  margin-bottom: var(--space-l);
   flex-wrap: wrap;
 }
-.select, .input {
-  padding: 8px 12px;
-  border: 1px solid var(--color-border, #444);
-  border-radius: 8px;
-  background: var(--color-surface, #1e1e2e);
-  color: var(--color-text, #e0e0e0);
-  font-size: 0.9rem;
+.filter-select {
+  padding: var(--input-text-padding-y) var(--input-text-padding-x);
+  border: var(--input-text-border-width) solid var(--border-default);
+  border-radius: var(--input-text-radius);
+  background: var(--surface-panel);
+  color: var(--text-default);
+  font-size: var(--input-text-fontSize-sm);
+  height: var(--input-text-height-md);
+  cursor: pointer;
+  transition: border-color var(--button-transition-duration);
 }
-.input { flex: 1; min-width: 180px; }
+.filter-select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+.search-wrap {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+.search-icon {
+  position: absolute;
+  left: var(--space-s);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-subtle);
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  padding: var(--input-text-padding-y) var(--input-text-padding-x);
+  padding-left: 36px;
+  border: var(--input-text-border-width) solid var(--border-default);
+  border-radius: var(--input-text-radius);
+  background: var(--surface-panel);
+  color: var(--text-default);
+  font-size: var(--input-text-fontSize-sm);
+  height: var(--input-text-height-md);
+  box-sizing: border-box;
+  transition: border-color var(--button-transition-duration);
+}
+.search-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 var(--button-focus-ringWidth) rgba(249, 115, 22, 0.2);
+}
+.search-input::placeholder {
+  color: var(--text-subtle);
+}
 .pagination {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-3, 12px);
-  margin-top: var(--space-4, 16px);
+  gap: var(--space-m);
+  margin-top: var(--space-l);
+  padding: var(--space-m) 0;
 }
 .page-btn {
-  padding: 6px 14px;
-  border: 1px solid var(--color-border, #444);
-  border-radius: 6px;
-  background: var(--color-surface, #1e1e2e);
-  color: var(--color-text, #e0e0e0);
+  padding: var(--button-size-sm-paddingY) var(--button-size-sm-paddingX);
+  border: var(--button-border-width) solid var(--border-strong);
+  border-radius: var(--button-radius-default);
+  background: var(--surface-panel);
+  color: var(--text-default);
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: var(--button-size-sm-fontSize);
+  font-weight: var(--button-fontWeight);
+  transition: all var(--button-transition-duration);
 }
-.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.page-info { font-size: 0.85rem; color: var(--color-text-muted, #888); }
+.page-btn:hover:not(:disabled) {
+  background: var(--surface-elevated);
+  border-color: var(--border-focus);
+}
+.page-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.page-info {
+  font-size: var(--paginator-info-fontSize);
+  color: var(--paginator-info-color);
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <span class="type-icon" :title="label">{{ icon }}</span>
+  <span class="type-icon" :class="type" :title="label">{{ icon }}</span>
 </template>
 
 <script setup lang="ts">
@@ -21,5 +21,14 @@ const label = computed(() => labels[props.type] || props.type);
 </script>
 
 <style scoped>
-.type-icon { font-size: 1.2rem; }
+.type-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-rounded);
+  font-size: 1rem;
+  background: var(--surface-elevated);
+}
 </style>
