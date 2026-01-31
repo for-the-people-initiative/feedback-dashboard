@@ -24,6 +24,12 @@ async function logout() {
   min-height: 100vh;
   background: var(--surface-canvas);
   color: var(--text-default);
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+:global(body) {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 .app-header {
   background: var(--surface-panel);

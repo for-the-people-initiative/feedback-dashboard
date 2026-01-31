@@ -12,6 +12,7 @@
   "dependencies": {
     "@for-the-people-initiative/design-system": "latest",
     "@libsql/client": "^0.14.0",
+    "@nuxtjs/google-fonts": "^3.2.0",
     "nuxt": "^3.17.0"
   },
   "devDependencies": {
