@@ -5,10 +5,13 @@
   </div>
   <DataTable
     v-else
+    ref="tableRef"
     :value="items"
     :columns="columns"
     :hoverable="true"
     :striped="true"
+    class="clickable-rows"
+    @click="onRowClick"
   >
     <template #empty>
       Geen feedback gevonden
@@ -17,7 +20,7 @@
       <TypeIcon :type="String(data.type)" />
     </template>
     <template #column-title="{ data }">
-      <span class="title-cell" @click="$emit('select', data.id)">{{ data.title || '(geen titel)' }}</span>
+      <span class="title-cell">{{ data.title || '(geen titel)' }}</span>
     </template>
     <template #column-app="{ data }">
       <span class="app-cell">{{ data.app || '-' }}</span>
@@ -35,8 +38,19 @@
 import DataTable from '@for-the-people-initiative/design-system/components/DataTable/DataTable.vue';
 import ProgressSpinner from '@for-the-people-initiative/design-system/components/ProgressSpinner/ProgressSpinner.vue';
 
-defineProps<{ items: any[]; loading: boolean }>();
-defineEmits<{ select: [id: string | number] }>();
+const props = defineProps<{ items: any[]; loading: boolean }>();
+const emit = defineEmits<{ select: [id: string | number] }>();
+
+function onRowClick(e: MouseEvent) {
+  const row = (e.target as HTMLElement).closest('tr.data-table__row') as HTMLElement | null;
+  if (!row) return;
+  const tbody = row.parentElement;
+  if (!tbody) return;
+  const index = Array.from(tbody.querySelectorAll('tr.data-table__row')).indexOf(row);
+  if (index >= 0 && props.items[index]) {
+    emit('select', props.items[index].id);
+  }
+}
 
 const columns = [
   { field: 'type', header: 'Type', width: '100px' },
@@ -63,12 +77,14 @@ function formatDate(d: string) {
   padding: var(--space-2xl);
   color: var(--text-muted);
 }
-.title-cell {
-  font-weight: 500;
+.clickable-rows :deep(.data-table__row) {
   cursor: pointer;
 }
-.title-cell:hover {
-  color: var(--text-link);
+.clickable-rows :deep(.data-table__row:hover) {
+  background-color: var(--dataTable-body-background-hover) !important;
+}
+.title-cell {
+  font-weight: 500;
 }
 .app-cell {
   color: var(--text-secondary);
