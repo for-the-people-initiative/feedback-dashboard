@@ -1,34 +1,24 @@
 <template>
-  <span class="type-icon" :class="type" :title="label">{{ icon }}</span>
+  <Tag :value="label" :color="color" rounded />
 </template>
 
 <script setup lang="ts">
+import Tag from '@for-the-people-initiative/design-system/components/Tag/Tag.vue';
+
 const props = defineProps<{ type: string }>();
 
-const icons: Record<string, string> = {
-  bug: '🐛',
-  suggestion: '✨',
-  question: '❓',
-};
-const labels: Record<string, string> = {
-  bug: 'Bug',
-  suggestion: 'Suggestie',
-  question: 'Vraag',
+const labelMap: Record<string, string> = {
+  bug: '🐛 Bug',
+  suggestion: '✨ Suggestie',
+  question: '❓ Vraag',
 };
 
-const icon = computed(() => icons[props.type] || '📝');
-const label = computed(() => labels[props.type] || props.type);
+const colorMap: Record<string, 'danger' | 'info' | 'warning' | 'neutral'> = {
+  bug: 'danger',
+  suggestion: 'info',
+  question: 'warning',
+};
+
+const label = computed(() => labelMap[props.type] || '📝 ' + props.type);
+const color = computed(() => colorMap[props.type] || 'neutral');
 </script>
-
-<style scoped>
-.type-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-rounded);
-  font-size: 1rem;
-  background: var(--surface-elevated);
-}
-</style>

@@ -2,44 +2,77 @@
   <div>
     <StatsCards :stats="stats" />
 
-    <div class="filters-bar">
-      <select v-model="filters.type" class="filter-select" @change="fetchFeedback">
-        <option value="">Alle types</option>
-        <option value="bug">🐛 Bug</option>
-        <option value="suggestion">✨ Suggestie</option>
-        <option value="question">❓ Vraag</option>
-      </select>
-      <select v-model="filters.status" class="filter-select" @change="fetchFeedback">
-        <option value="">Alle statussen</option>
-        <option value="new">Nieuw</option>
-        <option value="seen">Gezien</option>
-        <option value="in_progress">In behandeling</option>
-        <option value="resolved">Opgelost</option>
-        <option value="wont_fix">Niet oplossen</option>
-      </select>
-      <div class="search-wrap">
-        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input v-model="filters.search" class="search-input" placeholder="Zoeken..." @input="debouncedFetch" />
-      </div>
-    </div>
+    <Toolbar class="filters-toolbar">
+      <template #start>
+        <Select
+          v-model="filters.type"
+          :options="typeOptions"
+          placeholder="Alle types"
+          @change="fetchFeedback"
+        />
+        <Select
+          v-model="filters.status"
+          :options="statusOptions"
+          placeholder="Alle statussen"
+          @change="fetchFeedback"
+        />
+      </template>
+      <template #end>
+        <InputText
+          v-model="filters.search"
+          placeholder="Zoeken..."
+          @input="debouncedFetch"
+        />
+      </template>
+    </Toolbar>
 
     <FeedbackTable :items="items" :loading="loading" @select="(id) => navigateTo(`/feedback/${id}`)" />
 
-    <div class="pagination" v-if="totalPages > 1">
-      <button class="page-btn" :disabled="page <= 1" @click="page--; fetchFeedback()">← Vorige</button>
-      <span class="page-info">Pagina {{ page }} van {{ totalPages }}</span>
-      <button class="page-btn" :disabled="page >= totalPages" @click="page++; fetchFeedback()">Volgende →</button>
-    </div>
+    <Paginator
+      v-if="totalPages > 1"
+      :total-records="totalRecords"
+      :rows="20"
+      :first="(page - 1) * 20"
+      :show-info="true"
+      @page="onPage"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import Select from '@for-the-people-initiative/design-system/components/Select/Select.vue';
+import InputText from '@for-the-people-initiative/design-system/components/InputText/InputText.vue';
+import Toolbar from '@for-the-people-initiative/design-system/components/Toolbar/Toolbar.vue';
+import Paginator from '@for-the-people-initiative/design-system/components/Paginator/Paginator.vue';
+
 const items = ref<any[]>([]);
 const stats = ref<any>(null);
 const loading = ref(true);
 const page = ref(1);
 const totalPages = ref(1);
+const totalRecords = ref(0);
 const filters = reactive({ type: '', status: '', search: '' });
+
+const typeOptions = [
+  { label: 'Alle types', value: '' },
+  { label: '🐛 Bug', value: 'bug' },
+  { label: '✨ Suggestie', value: 'suggestion' },
+  { label: '❓ Vraag', value: 'question' },
+];
+
+const statusOptions = [
+  { label: 'Alle statussen', value: '' },
+  { label: 'Nieuw', value: 'new' },
+  { label: 'Gezien', value: 'seen' },
+  { label: 'In behandeling', value: 'in_progress' },
+  { label: 'Opgelost', value: 'resolved' },
+  { label: 'Niet oplossen', value: 'wont_fix' },
+];
+
+function onPage(event: { page: number }) {
+  page.value = event.page;
+  fetchFeedback();
+}
 
 let debounceTimer: ReturnType<typeof setTimeout>;
 function debouncedFetch() {
@@ -57,6 +90,7 @@ async function fetchFeedback() {
     const data = await $fetch<any>('/api/feedback', { params });
     items.value = data.items;
     totalPages.value = data.totalPages;
+    totalRecords.value = data.total || data.totalPages * 20;
   } catch (e: any) {
     if (e?.statusCode === 401) navigateTo('/login');
   } finally {
@@ -81,90 +115,7 @@ onUnmounted(() => clearInterval(interval));
 </script>
 
 <style scoped>
-.filters-bar {
-  display: flex;
-  gap: var(--space-s);
+.filters-toolbar {
   margin-bottom: var(--space-l);
-  flex-wrap: wrap;
-}
-.filter-select {
-  padding: var(--input-text-padding-y) var(--input-text-padding-x);
-  border: var(--input-text-border-width) solid var(--border-default);
-  border-radius: var(--input-text-radius);
-  background: var(--surface-panel);
-  color: var(--text-default);
-  font-size: var(--input-text-fontSize-sm);
-  height: var(--input-text-height-md);
-  cursor: pointer;
-  transition: border-color var(--button-transition-duration);
-}
-.filter-select:focus {
-  outline: none;
-  border-color: var(--border-focus);
-}
-.search-wrap {
-  flex: 1;
-  min-width: 200px;
-  position: relative;
-}
-.search-icon {
-  position: absolute;
-  left: var(--space-s);
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-subtle);
-  pointer-events: none;
-}
-.search-input {
-  width: 100%;
-  padding: var(--input-text-padding-y) var(--input-text-padding-x);
-  padding-left: 36px;
-  border: var(--input-text-border-width) solid var(--border-default);
-  border-radius: var(--input-text-radius);
-  background: var(--surface-panel);
-  color: var(--text-default);
-  font-size: var(--input-text-fontSize-sm);
-  height: var(--input-text-height-md);
-  box-sizing: border-box;
-  transition: border-color var(--button-transition-duration);
-}
-.search-input:focus {
-  outline: none;
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 var(--button-focus-ringWidth) rgba(249, 115, 22, 0.2);
-}
-.search-input::placeholder {
-  color: var(--text-subtle);
-}
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-m);
-  margin-top: var(--space-l);
-  padding: var(--space-m) 0;
-}
-.page-btn {
-  padding: var(--button-size-sm-paddingY) var(--button-size-sm-paddingX);
-  border: var(--button-border-width) solid var(--border-strong);
-  border-radius: var(--button-radius-default);
-  background: var(--surface-panel);
-  color: var(--text-default);
-  cursor: pointer;
-  font-size: var(--button-size-sm-fontSize);
-  font-weight: var(--button-fontWeight);
-  transition: all var(--button-transition-duration);
-}
-.page-btn:hover:not(:disabled) {
-  background: var(--surface-elevated);
-  border-color: var(--border-focus);
-}
-.page-btn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-.page-info {
-  font-size: var(--paginator-info-fontSize);
-  color: var(--paginator-info-color);
 }
 </style>

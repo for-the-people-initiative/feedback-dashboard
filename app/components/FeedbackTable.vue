@@ -1,38 +1,50 @@
 <template>
-  <div class="table-container">
-    <div v-if="loading" class="table-empty">
-      <div class="spinner"></div>
-      <span>Laden...</span>
-    </div>
-    <div v-else-if="!items.length" class="table-empty">
-      Geen feedback gevonden
-    </div>
-    <table v-else class="feedback-table">
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Titel</th>
-          <th>App</th>
-          <th>Status</th>
-          <th>Datum</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in items" :key="item.id" @click="$emit('select', item.id)" class="table-row">
-          <td><TypeIcon :type="String(item.type)" /></td>
-          <td class="title-cell">{{ item.title || '(geen titel)' }}</td>
-          <td class="app-cell">{{ item.app || '-' }}</td>
-          <td><StatusBadge :status="String(item.status || 'new')" /></td>
-          <td class="date-cell">{{ formatDate(String(item.created_at || '')) }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div v-if="loading" class="table-loading">
+    <ProgressSpinner />
+    <span>Laden...</span>
   </div>
+  <DataTable
+    v-else
+    :value="items"
+    :columns="columns"
+    :hoverable="true"
+    :striped="true"
+  >
+    <template #empty>
+      Geen feedback gevonden
+    </template>
+    <template #column-type="{ data }">
+      <TypeIcon :type="String(data.type)" />
+    </template>
+    <template #column-title="{ data }">
+      <span class="title-cell" @click="$emit('select', data.id)">{{ data.title || '(geen titel)' }}</span>
+    </template>
+    <template #column-app="{ data }">
+      <span class="app-cell">{{ data.app || '-' }}</span>
+    </template>
+    <template #column-status="{ data }">
+      <StatusBadge :status="String(data.status || 'new')" />
+    </template>
+    <template #column-created_at="{ data }">
+      <span class="date-cell">{{ formatDate(String(data.created_at || '')) }}</span>
+    </template>
+  </DataTable>
 </template>
 
 <script setup lang="ts">
+import DataTable from '@for-the-people-initiative/design-system/components/DataTable/DataTable.vue';
+import ProgressSpinner from '@for-the-people-initiative/design-system/components/ProgressSpinner/ProgressSpinner.vue';
+
 defineProps<{ items: any[]; loading: boolean }>();
 defineEmits<{ select: [id: string | number] }>();
+
+const columns = [
+  { field: 'type', header: 'Type', width: '100px' },
+  { field: 'title', header: 'Titel' },
+  { field: 'app', header: 'App', width: '120px' },
+  { field: 'status', header: 'Status', width: '140px' },
+  { field: 'created_at', header: 'Datum', width: '180px' },
+];
 
 function formatDate(d: string) {
   if (!d) return '-';
@@ -43,47 +55,20 @@ function formatDate(d: string) {
 </script>
 
 <style scoped>
-.table-container {
-  background: var(--dataTable-background);
-  border: var(--dataTable-border-width) solid var(--dataTable-border-color);
-  border-radius: var(--dataTable-radius);
-  overflow: hidden;
-}
-.feedback-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.feedback-table th {
-  background: var(--dataTable-header-background);
-  color: var(--dataTable-header-color);
-  padding: var(--dataTable-header-padding);
-  font-size: var(--dataTable-header-fontSize);
-  font-weight: var(--dataTable-header-fontWeight);
-  text-align: left;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid var(--dataTable-header-borderColor);
-}
-.feedback-table td {
-  padding: var(--dataTable-body-padding);
-  font-size: var(--dataTable-body-fontSize);
-  color: var(--dataTable-body-color);
-  border-bottom: 1px solid var(--dataTable-body-borderColor);
-  vertical-align: middle;
-}
-.table-row {
-  cursor: pointer;
-  transition: background var(--dataTable-transition-duration);
-}
-.table-row:hover {
-  background: var(--dataTable-body-background-hover);
+.table-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-s);
+  padding: var(--space-2xl);
+  color: var(--text-muted);
 }
 .title-cell {
   font-weight: 500;
-  max-width: 300px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  cursor: pointer;
+}
+.title-cell:hover {
+  color: var(--text-link);
 }
 .app-cell {
   color: var(--text-secondary);
@@ -93,22 +78,4 @@ function formatDate(d: string) {
   white-space: nowrap;
   font-size: 13px;
 }
-.table-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-s);
-  padding: var(--dataTable-empty-padding);
-  color: var(--dataTable-empty-color);
-  text-align: center;
-}
-.spinner {
-  width: 24px;
-  height: 24px;
-  border: 3px solid var(--border-subtle);
-  border-top-color: var(--brand-secondary);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
 </style>
