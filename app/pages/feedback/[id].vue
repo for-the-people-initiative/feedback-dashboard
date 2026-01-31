@@ -1,10 +1,9 @@
 <template>
   <div v-if="feedback">
     <Button
-      label="Terug naar overzicht"
+      label="← Terug naar overzicht"
       variant="text"
       size="sm"
-      icon="pi pi-arrow-left"
       class="back-btn"
       @click="navigateTo('/')"
     />
