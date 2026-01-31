@@ -3,3 +3,11 @@
     <NuxtPage />
   </NuxtLayout>
 </template>
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--surface-canvas);
+}
+</style>
