@@ -37,6 +37,7 @@
               :showThumbnails="true"
               :showItemNavigators="true"
               :circular="true"
+              thumbnailsPosition="top"
             />
           </template>
         </Card>
